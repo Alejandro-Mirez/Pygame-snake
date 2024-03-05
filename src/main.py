@@ -10,19 +10,14 @@ pixel_width = 50
 screen = pygame.display.set_mode([square_width] * 2)
 clock = pygame.time.Clock()
 running = True
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-snake_speed = 7
-last_key = []
+snake_speed = 6
+last_key = ""
+score = 0
+
 
 def generate_starting_position():
     position_range = (pixel_width // 2, square_width - pixel_width // 2, pixel_width)
     return [random.randrange(*position_range), random.randrange(*position_range)]
-
-
-def reset():
-    target.center = generate_starting_position()
-    snake_pixel.center = generate_starting_position()
-    return snake_pixel.copy()
 
 
 def is_out_of_bounds():
@@ -45,70 +40,78 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    screen.fill("black")
+    def draw_snake():
+        for snake_part in snake:
+            pygame.draw.rect(screen, "blue", snake_part)
+
+
+    def draw_target():
+        pygame.draw.rect(screen, "red", target)
+
+
+# HITTING THE WALL
 
     if is_out_of_bounds():
-        snake_length = 1
-        snake_speed = 7
-        target.center = generate_starting_position()
+        snake_length = 1 # reset snake length
+        snake_speed = 6 # reset snake speed
+        snake_direction = (0, 0) # reset snake direction so it stays still after reset
+        last_key = "" # reset last key so that if we lost moving in one direction...
+        # ...we are able to start moving in the opposite direction after reset
+
+        target.center = generate_starting_position() # generate new positions
         snake_pixel.center = generate_starting_position()
-        snake = [snake_pixel.copy()]
+        print("Your score is: ", score)
+        score = 0 # reset score
+
+
+# EATING THE TARGET
 
     if snake_pixel.center == target.center:
         target.center = generate_starting_position()
         snake_length += 1
         snake.append(snake_pixel.copy())
-        print("previous speed: ", snake_speed)
-        snake_speed += 2
-        print("increased snake speed! Current speed: ", snake_speed)
+        snake_speed += 1
+        score += 1
 
-
-# steering
+# STEERING
 
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_UP]:
-        if last_key == "down":
-            print("bad move")
-        else:
-            last_key = "up"
-            snake_direction = (0, - pixel_width)
+    if keys[pygame.K_UP] and last_key != "down":
+        last_key = "up"
+        snake_direction = (0, - pixel_width)
 
-    if keys[pygame.K_DOWN]:
-        if last_key == "up":
-            print("bad move")
-        else:
-            last_key = "down"
-            snake_direction = (0, pixel_width)
+    if keys[pygame.K_DOWN] and last_key != "up":
+        last_key = "down"
+        snake_direction = (0, pixel_width)
 
-    if keys[pygame.K_LEFT]:
-        if last_key == "right":
-            print("bad move")
-        else:
-            last_key = "left"
-            snake_direction = (- pixel_width, 0)
+    if keys[pygame.K_LEFT] and last_key != "right":
+        last_key = "left"
+        snake_direction = (- pixel_width, 0)
 
-    if keys[pygame.K_RIGHT]:
-       if last_key == "left":
-           print("bad move")
-       else:
-           last_key = "right"
-           snake_direction = (pixel_width, 0)
+    if keys[pygame.K_RIGHT] and last_key != "left":
+        last_key = "right"
+        snake_direction = (pixel_width, 0)
 
 
-    for snake_part in snake:
-        pygame.draw.rect(screen, "blue", snake_part)
+# DRAWING SNAKE AND TARGET
 
-    pygame.draw.rect(screen, "red", target)
+    screen.fill("black")
 
-    snake_pixel.move_ip(snake_direction)
+    draw_snake()
+
+    draw_target()
+
+
+# MOVING ANIMATION
+
     snake.append(snake_pixel.copy())
+    snake_pixel.move_ip(snake_direction)
     snake = snake[-snake_length:]
 
     pygame.display.flip()
 
     clock.tick(snake_speed)
-
 
 
 pygame.quit()
