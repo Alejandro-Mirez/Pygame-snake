@@ -22,7 +22,7 @@ start_screen_on = True
 score_screen_on = False
 
 play_button_pixel = pygame.rect.Rect([(screen.get_width()-100) / 2, 320, pixel_width * 2, pixel_width])
-play_again_button_pixel = pygame.rect.Rect([(screen.get_width()-150) / 2, 320, pixel_width * 4, pixel_width])
+play_again_button_pixel = pygame.rect.Rect([(screen.get_width()-150) / 2, 320, pixel_width * 3, pixel_width])
 quit_button_pixel = pygame.rect.Rect([(screen.get_width()-100) / 2, 420, pixel_width * 2, pixel_width])
 option = "play"
 
@@ -158,7 +158,7 @@ def generate_score_screen(score):
     score_msg = screen.blit(score_message, ((screen.get_width() - score_message.get_width()) / 2, 220))
     play_again_message = font.render("Play Again", False, (255, 255, 255))
     play_again_btn = pygame.draw.rect(screen, "green", play_again_button_pixel)
-    play_btn_txt = screen.blit(play_again_message, (356, 331))
+    play_btn_txt = screen.blit(play_again_message, (330, 331))
     quit_btn = pygame.draw.rect(screen, "gray30", quit_button_pixel)
     quit_btn_txt = screen.blit(quit_message, (356.5, 431))
     screen.blit(guide_message, ((screen.get_width() - guide_message.get_width()) / 2, 520))
@@ -182,13 +182,13 @@ def generate_score_screen(score):
                     pygame.draw.rect(screen, "gray30", quit_button_pixel)
                     pygame.draw.rect(screen, "green", play_again_button_pixel)
                     screen.blit(quit_message, (356.5, 431))
-                    screen.blit(play_again_message, (356, 331))
+                    screen.blit(play_again_message, (330, 331))
                 elif event.key == pygame.K_DOWN:
                     option = "quit"
                     pygame.draw.rect(screen, "green", quit_button_pixel)
                     pygame.draw.rect(screen, "gray30", play_again_button_pixel)
                     screen.blit(quit_message, (356.5, 431))
-                    screen.blit(play_again_message, (356, 331))
+                    screen.blit(play_again_message, (330, 331))
                 elif event.key == pygame.K_SPACE:
                     if option == "quit":
                         screen.fill("black")
